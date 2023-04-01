@@ -24,7 +24,7 @@ Server::Run() {
     }
 }
 
-Server::Server(unsigned short port) {
+Server::Server(unsigned short port) { //TODO: should check if database of users ("account_database.txt") exists, and if not then create empty
     std::cout << "Starting the server" << std::endl;
 
     this->port = port;
@@ -87,7 +87,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
     switch (type) //TODO: should watch if 2 login requests won't come from the same socket
     {
     case 0: // signup
-        sign_up();
+        sign_up(packet, client);
         break;
     case 1: // login
         log_in();
@@ -106,4 +106,66 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         std::cout << "Error: unknown packet type from " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
         break;
     }
+}
+
+void
+Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
+    // Extract wanted username and password
+    //TODO: what if password or both are missing
+    std::string user_name, password;
+    packet >> user_name;
+    packet >> password;
+
+    // Prepare packet for response
+    sf::Packet answer;
+
+    // Check if username isn't already used in database
+    bool already_exists = is_username_used(user_name);
+
+    if(already_exists) {
+        // Send unsuccesseful response
+        answer << 1;
+    } else {
+        // Send successful response and add to database
+        add_user_to_database(user_name, password);
+        answer << 0;
+    }
+
+    // Send the response
+    if(client->send(answer) != sf::Socket::Done) {
+        std::cout << "Error: could not send response for sign up request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
+    }
+}
+
+bool
+Server::is_username_used(std::string &user_name) {
+    bool to_return = false;
+
+    // Cycle through all user names from database
+    std::ifstream account_database("account_database.txt");
+    for(std::string line; getline(account_database, line);) {
+        std::stringstream line_steam(line);
+        std::string known_user;
+        line_steam >> known_user;
+
+        // If if username is already in there then break
+        if(user_name == known_user) {
+            to_return = true;
+            break;
+        }
+    }
+    account_database.close();
+
+    return to_return;
+}
+
+void
+Server::add_user_to_database(const std::string &user_name, const std::string &password) {
+    // Open database in append mode 
+    std::ofstream out;
+    out.open("account_database.txt", std::ios::app);
+
+    // Add new user
+    out << user_name << " " << password << std::endl;
+    out.close(); 
 }
