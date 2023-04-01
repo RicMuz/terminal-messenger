@@ -90,7 +90,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         sign_up(packet, client);
         break;
     case 1: // login
-        log_in();
+        log_in(packet, client);
         break;
     case 2: // logout
         log_out();
@@ -139,7 +139,7 @@ Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
 
 bool
 Server::is_username_used(std::string &user_name) {
-    bool to_return = false;
+    bool to_return = false; // Need to close the file before returning the value
 
     // Cycle through all user names from database
     std::ifstream account_database("account_database.txt");
@@ -168,4 +168,61 @@ Server::add_user_to_database(const std::string &user_name, const std::string &pa
     // Add new user
     out << user_name << " " << password << std::endl;
     out.close(); 
+}
+
+void
+Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
+    // Extract username and password
+    //TODO: what if password or both are missing
+    std::string user_name, password;
+    packet >> user_name;
+    packet >> password;
+
+    // Check database
+    int answer_from_database = check_login_data(user_name, password);
+
+    // Create packet with answer
+    sf::Packet answer;
+    answer << answer_from_database;
+
+    if(answer_from_database == 0) {
+        std::cout << "User " << user_name << " has loged in on" << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl; 
+    }
+
+    // Send the response
+    if(client->send(answer) != sf::Socket::Done) {
+        std::cout << "Error: could not send response for log in request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
+    }
+}
+
+int
+Server::check_login_data(std::string &user_name, std::string &password) {
+    int to_return = 2; // Need to close the file before returning the values
+    /*
+    0 - login successful
+    1 - wrong password
+    2 - user does not exist
+    */
+
+    // Cycle through all user names from database
+    std::ifstream account_database("account_database.txt");
+    for(std::string line; getline(account_database, line);) {
+        std::stringstream line_stream(line);
+        std::string user_name_database, password_database;
+        line_stream >> user_name_database;
+        line_stream >> password_database;
+
+        // If if username is already in there then break
+        if(user_name == user_name_database) {
+            if(password == password_database) {
+                to_return = 0;
+                break;
+            }
+            to_return = 1;
+            break;
+        }
+    }
+    account_database.close();
+
+    return to_return;
 }

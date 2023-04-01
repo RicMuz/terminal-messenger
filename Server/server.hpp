@@ -22,13 +22,14 @@ private:
     void manage_packet(sf::Packet &packet, sf::TcpSocket *client); // decide what to do with the packet
 
     void sign_up(sf::Packet &packet, sf::TcpSocket *client);
-    void log_in();
+    void log_in(sf::Packet &packet, sf::TcpSocket *client);
     void log_out();
     void open_chat();
     void send_message();
 
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
+    int check_login_data(std::string &user_name, std::string &password);
 
 public:
     Server(unsigned short);
