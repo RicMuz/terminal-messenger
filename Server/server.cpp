@@ -44,6 +44,7 @@ Server::connect_client() {
     // Try connect client
     if(listener.accept(*new_client) == sf::Socket::Done) {
         // If successful then add him to clients and start listening
+        std::cout << new_client->getRemoteAddress() << ":" << new_client->getRemotePort() << " connected" << std::endl;
         clients.push_back(std::move(new_client));
         selector.add(*clients.back());
     } else {
