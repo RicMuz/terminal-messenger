@@ -14,9 +14,10 @@ private:
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
 
     void connect_client(); // set up tcp connection
+    void disconnect_client(sf::TcpSocket *client, size_t position); // end tcp conncetion
     void receive_packet(sf::TcpSocket *client, size_t position); // check if socket received a packet
 
-    void manage_packet(); // decide what to do with the packet
+    void manage_packet(const sf::Packet &packet); // decide what to do with the packet
 
 public:
     Server(unsigned short);

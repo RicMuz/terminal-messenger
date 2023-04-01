@@ -14,7 +14,10 @@ Server::Run() {
             } else {
                 // test all clients
                 for(size_t i = 0; i < clients.size(); ++i) {
-                    receive_packet(clients[i].get(), i);
+                    if(selector.isReady(*clients[i])) {
+                        receive_packet(clients[i].get(), i);
+                        break; //TODO: possibly deleted user, but this might not be neccessary 
+                    }
                 }
             }
         } 
@@ -46,4 +49,24 @@ Server::connect_client() {
     } else {
         std::cout << "Error: could not connect client" << std::endl;
     }
+}
+
+void
+Server::receive_packet(sf::TcpSocket *client, size_t position) {
+    sf::Packet packet;
+
+    // Tcp connection could have ended
+    if(client->receive(packet) == sf::Socket::Disconnected) {
+        disconnect_client(client, position);
+        return;
+    }
+
+    // If packet was empty something went wrong
+    if(packet.getDataSize() <= 0) {
+        std::cout << "Error: recieved empty packet" << std::endl;
+        return;
+    }
+
+    // Possibly good packet
+    manage_packet(packet);
 }
