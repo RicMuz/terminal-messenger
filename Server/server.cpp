@@ -76,5 +76,34 @@ Server::receive_packet(sf::TcpSocket *client, size_t position) {
     }
 
     // Possibly good packet
-    manage_packet(packet);
+    manage_packet(packet, client);
+}
+
+void
+Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
+    int type;
+    packet >> type;
+
+    switch (type) //TODO: should watch if 2 login requests won't come from the same socket
+    {
+    case 0: // signup
+        sign_up();
+        break;
+    case 1: // login
+        log_in();
+        break;
+    case 2: // logout
+        log_out();
+        break;
+    case 3: // open chat
+        open_chat();
+        break;
+    case 4: // send message to chat
+        send_message();
+        break;
+    
+    default:
+        std::cout << "Error: unknown packet type from " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
+        break;
+    }
 }

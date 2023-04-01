@@ -17,7 +17,13 @@ private:
     void disconnect_client(sf::TcpSocket *client, size_t position); // end tcp conncetion
     void receive_packet(sf::TcpSocket *client, size_t position); // check if socket received a packet
 
-    void manage_packet(const sf::Packet &packet); // decide what to do with the packet
+    void manage_packet(sf::Packet &packet, sf::TcpSocket *client); // decide what to do with the packet
+
+    void sign_up();
+    void log_in();
+    void log_out();
+    void open_chat();
+    void send_message();
 
 public:
     Server(unsigned short);
