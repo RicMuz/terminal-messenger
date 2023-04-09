@@ -96,7 +96,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         log_out(client);
         break;
     case 3: // open chat
-        open_chat();
+        open_chat(packet, client);
         break;
     case 4: // send message to chat
         send_message();
@@ -241,4 +241,73 @@ Server::log_out(sf::TcpSocket *client) {
 
     // Delete it from map
     loged_users.erase(user_address.str());
+}
+
+void
+Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
+    std::string user_name, other_user, file_name, chat;
+    packet >> user_name;
+    packet >> other_user;
+
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    sf::Packet answer;
+
+    // Test if the right user is asking
+    if(loged_users[user_address.str()] != user_name) {
+        std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
+        packet << 1;
+        send_answer_to_client(packet, "open chat", client);
+        return;
+    }
+
+    // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
+    // Get the chat file name
+    if(user_name > other_user) {
+        file_name = user_name + " " + other_user + ".txt";
+    } else {
+        file_name = other_user + " " + user_name + ".txt";
+    }
+
+    // Get requested lines
+    chat = get_last_n_messages(file_name, 10);
+
+    // Create an answer with possitive result
+    answer << 0 << chat;
+
+    // Send the response
+    send_answer_to_client(answer, "open chat", client);
+}
+
+std::string
+Server::get_last_n_messages(const std::string &file_name, int n) {
+    std::ifstream chat_stream;
+    chat_stream.open(file_name);
+
+    // Test if the file can be openned 
+    if(!chat_stream.good()) {
+        std::cout << "Error: can't open chat file " << file_name << std::endl;
+        return "";
+    }
+
+    std::queue<std::string> lines;
+    
+    // Get last n lines if possible
+    for(std::string line; getline(chat_stream, line);) {
+        lines.push(line);
+        if(lines.size() > n) {
+            lines.pop();
+        }
+    }
+
+    std::stringstream output_stream;
+
+    // Construct them back with new line separator
+    for(int i = 0; i < lines.size(); ++i) {
+        output_stream << lines.front() << std::endl;
+        lines.pop();
+    }
+
+    return output_stream.str();
 }
