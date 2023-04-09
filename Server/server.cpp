@@ -306,6 +306,8 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
         }
     }
 
+    chat_stream.close();
+
     std::stringstream output_stream;
 
     // Construct them back with new line separator
