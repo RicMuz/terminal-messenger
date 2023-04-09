@@ -206,11 +206,11 @@ Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
 
 int
 Server::check_login_data(std::string &user_name, std::string &password) {
-    int to_return = 2; // Need to close the file before returning the values
+    int to_return = 3; // Need to close the file before returning the values
     /*
     0 - login successful
-    1 - wrong password
-    2 - user does not exist
+    2 - wrong password
+    3 - user does not exist
     */
 
     // Cycle through all user names from database
@@ -227,7 +227,7 @@ Server::check_login_data(std::string &user_name, std::string &password) {
                 to_return = 0;
                 break;
             }
-            to_return = 1;
+            to_return = 2;
             break;
         }
     }
@@ -260,7 +260,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // Test if the right user is asking
     if(loged_users[user_address.str()] != user_name) {
         std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 1;
+        packet << 4;
         send_answer_to_client(packet, "add friend", client);
         return;
     }
@@ -268,7 +268,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // User wants to add himself as friend
     if(user_name == other_user) {
         std::cout << "Error: user " << user_name << " wants to add himself as friend." << std::endl;
-        packet << 2;
+        packet << 5;
         send_answer_to_client(packet, "add friend", client);
         return;
     }
@@ -276,7 +276,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // User wants to add non existing account 
     if(!is_username_used(other_user)) {
         std::cout << "Error: user " << user_name << " wants to add non-existing account as friend" << std::endl;
-        packet << 3;
+        packet << 6;
         send_answer_to_client(packet, "add friend", client);
         return;
     }
@@ -317,7 +317,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     // Test if the right user is asking
     if(loged_users[user_address.str()] != user_name) {
         std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 1;
+        packet << 4;
         send_answer_to_client(packet, "open chat", client);
         return;
     }
@@ -394,7 +394,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
     // Test if the right user is asking
     if(loged_users[user_address.str()] != user_name) {
         std::cout << "Error: " << user_address.str() << " wants to send message as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 1;
+        packet << 4;
         send_answer_to_client(packet, "send message", client);
         return;
     }
