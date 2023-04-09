@@ -99,7 +99,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         open_chat(packet, client);
         break;
     case 4: // send message to chat
-        send_message();
+        send_message(packet, client);
         break;
     
     default:
@@ -310,4 +310,53 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
     }
 
     return output_stream.str();
+}
+
+void
+Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
+    std::string user_name, other_user, message, file_name;
+    packet >> user_name;
+    packet >> other_user;
+    packet >> message;
+
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    sf::Packet answer;
+
+    // Test if the right user is asking
+    if(loged_users[user_address.str()] != user_name) {
+        std::cout << "Error: " << user_address.str() << " wants to send message as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
+        packet << 1;
+        send_answer_to_client(packet, "send message", client);
+        return;
+    }
+
+    // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
+    // Get the chat file name
+    if(user_name > other_user) {
+        file_name = user_name + " " + other_user + ".txt";
+    } else {
+        file_name = other_user + " " + user_name + ".txt";
+    }
+
+    // Add the message to the end of chat file
+    add_message_to_file(user_name, message, file_name);
+
+    // Create an answer with possitive result
+    answer << 0;
+
+    // Send the response 
+    send_answer_to_client(answer, "send message", client);
+}
+
+void
+Server::add_message_to_file(const std::string &user_name, const std::string &message, const std::string &file_name) {
+    // Open chat file in append mode 
+    std::ofstream out;
+    out.open(file_name, std::ios::app);
+
+    // Add the message
+    out << user_name << ": " << message << std::endl;
+    out.close(); 
 }
