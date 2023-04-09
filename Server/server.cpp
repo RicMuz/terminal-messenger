@@ -118,6 +118,10 @@ Server::send_answer_to_client(sf::Packet &packet, const std::string &type, sf::T
     }
 }
 
+//============================================================================================================
+// SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP
+//============================================================================================================
+
 void
 Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
     // Extract wanted username and password
@@ -178,6 +182,10 @@ Server::add_user_to_database(const std::string &user_name, const std::string &pa
     out.close(); 
 }
 
+//============================================================================================================
+// LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN - LOG IN -
+//============================================================================================================
+
 void
 Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
     // Extract username and password
@@ -236,6 +244,10 @@ Server::check_login_data(std::string &user_name, std::string &password) {
     return to_return;
 }
 
+//============================================================================================================
+// LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT - LOG OUT
+//============================================================================================================
+
 void
 Server::log_out(sf::TcpSocket *client) {
     // Get user address and port
@@ -245,6 +257,10 @@ Server::log_out(sf::TcpSocket *client) {
     // Delete it from map
     loged_users.erase(user_address.str());
 }
+
+//============================================================================================================
+// ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD FRIEND - ADD 
+//============================================================================================================
 
 void
 Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
@@ -302,6 +318,10 @@ Server::add_to_friend_list(const std::string &user_name, const std::string &othe
     out << other_user_name << std::endl;
     out.close(); 
 }
+
+//============================================================================================================
+// OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT - OPEN CHAT -  
+//============================================================================================================
 
 void
 Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
@@ -378,6 +398,10 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
 
     return output_stream.str();
 }
+
+//============================================================================================================
+// SEND MESSAGE - SEND MESSAGE - SEND MESSAGE - SEND MESSAGE - SEND MESSAGE - SEND MESSAGE - SEND MESSAGE - SE   
+//============================================================================================================
 
 void
 Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
