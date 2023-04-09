@@ -93,7 +93,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         log_in(packet, client);
         break;
     case 2: // logout
-        log_out();
+        log_out(client);
         break;
     case 3: // open chat
         open_chat();
@@ -228,4 +228,14 @@ Server::check_login_data(std::string &user_name, std::string &password) {
     account_database.close();
 
     return to_return;
+}
+
+void
+Server::log_out(sf::TcpSocket *client) {
+    // Get user address and port
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    // Delete it from map
+    loged_users.erase(user_address.str());
 }

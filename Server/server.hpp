@@ -25,7 +25,7 @@ private:
 
     void sign_up(sf::Packet &packet, sf::TcpSocket *client);
     void log_in(sf::Packet &packet, sf::TcpSocket *client);
-    void log_out();
+    void log_out(sf::TcpSocket *client);
     void open_chat();
     void send_message();
 
