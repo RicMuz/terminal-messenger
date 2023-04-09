@@ -29,6 +29,8 @@ private:
     void open_chat();
     void send_message();
 
+    void send_answer_to_client(sf::Packet &packet, const std::string &type, sf::TcpSocket *client);
+
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
     int check_login_data(std::string &user_name, std::string &password);

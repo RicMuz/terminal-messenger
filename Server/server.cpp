@@ -109,6 +109,13 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
 }
 
 void
+Server::send_answer_to_client(sf::Packet &packet, const std::string &type, sf::TcpSocket *client) {
+    if(client->send(packet) != sf::Socket::Done) {
+        std::cout << "Error: could not send response for " << type <<" request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
+    }
+}
+
+void
 Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
     // Extract wanted username and password
     //TODO: what if password or both are missing
@@ -132,9 +139,7 @@ Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
     }
 
     // Send the response
-    if(client->send(answer) != sf::Socket::Done) {
-        std::cout << "Error: could not send response for sign up request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
-    }
+    send_answer_to_client(answer, "sign up", client);
 }
 
 bool
@@ -193,9 +198,7 @@ Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
     }
 
     // Send the response
-    if(client->send(answer) != sf::Socket::Done) {
-        std::cout << "Error: could not send response for log in request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
-    }
+    send_answer_to_client(answer, "log in", client);
 }
 
 int
