@@ -95,10 +95,13 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
     case 2: // logout
         log_out(client);
         break;
-    case 3: // open chat
+    case 3:
+        add_friend(packet, client);
+        break;
+    case 4: // open chat
         open_chat(packet, client);
         break;
-    case 4: // send message to chat
+    case 5: // send message to chat
         send_message(packet, client);
         break;
     
@@ -241,6 +244,63 @@ Server::log_out(sf::TcpSocket *client) {
 
     // Delete it from map
     loged_users.erase(user_address.str());
+}
+
+void
+Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
+    std::string user_name, other_user, friendlist_file_name;
+    packet >> user_name;
+    packet >> other_user;
+
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    sf::Packet answer;
+
+    // Test if the right user is asking
+    if(loged_users[user_address.str()] != user_name) {
+        std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
+        packet << 1;
+        send_answer_to_client(packet, "add friend", client);
+        return;
+    }
+
+    // User wants to add himself as friend
+    if(user_name == other_user) {
+        std::cout << "Error: user " << user_name << " wants to add himself as friend." << std::endl;
+        packet << 2;
+        send_answer_to_client(packet, "add friend", client);
+        return;
+    }
+
+    // User wants to add non existing account 
+    if(!is_username_used(other_user)) {
+        std::cout << "Error: user " << user_name << " wants to add non-existing account as friend" << std::endl;
+        packet << 3;
+        send_answer_to_client(packet, "add friend", client);
+        return;
+    }
+
+    // Add friend to friend list file
+    add_to_friend_list(user_name, other_user);
+
+    // Create an answer with possitive result
+    answer << 0;
+
+    // Send the response
+    send_answer_to_client(answer, "add friend", client);
+    
+}
+
+void
+Server::add_to_friend_list(const std::string &user_name, const std::string &other_user_name) {
+    // Open chat file in append mode 
+    std::ofstream out;
+    out.open(user_name + ".txt", std::ios::app);
+
+    // Add the message
+    out << other_user_name << std::endl;
+    out.close(); 
 }
 
 void

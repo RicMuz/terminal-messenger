@@ -27,6 +27,7 @@ private:
     void sign_up(sf::Packet &packet, sf::TcpSocket *client);
     void log_in(sf::Packet &packet, sf::TcpSocket *client);
     void log_out(sf::TcpSocket *client);
+    void add_friend(sf::Packet &packet, sf::TcpSocket *client);
     void open_chat(sf::Packet &packet, sf::TcpSocket *client);
     void send_message(sf::Packet &packet, sf::TcpSocket *client);
 
@@ -35,6 +36,7 @@ private:
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
     int check_login_data(std::string &user_name, std::string &password);
+    void add_to_friend_list(const std::string &user_name, const std::string &other_user_name);
     std::string create_chat_file_name(const std::string &user_name, const std::string &other_user_name);
     std::string get_last_n_messages(const std::string &file_name, int n);
     void add_message_to_file(const std::string &user_name, const std::string &message, const std::string &file_name);
