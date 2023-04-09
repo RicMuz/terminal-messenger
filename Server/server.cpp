@@ -264,11 +264,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
 
     // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
     // Get the chat file name
-    if(user_name > other_user) {
-        file_name = user_name + " " + other_user + ".txt";
-    } else {
-        file_name = other_user + " " + user_name + ".txt";
-    }
+    file_name = create_chat_file_name(user_name, other_user);
 
     // Get requested lines
     chat = get_last_n_messages(file_name, 10);
@@ -278,6 +274,15 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
 
     // Send the response
     send_answer_to_client(answer, "open chat", client);
+}
+
+std::string
+Server::create_chat_file_name(const std::string &user_name, const std::string &other_user_name) {
+    if(user_name > other_user_name) {
+        return user_name + "-" + other_user_name + ".txt";
+    } else {
+        return other_user_name + "-" + user_name + ".txt";
+    }
 }
 
 std::string
@@ -334,11 +339,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
 
     // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
     // Get the chat file name
-    if(user_name > other_user) {
-        file_name = user_name + " " + other_user + ".txt";
-    } else {
-        file_name = other_user + " " + user_name + ".txt";
-    }
+    file_name = create_chat_file_name(user_name, other_user);
 
     // Add the message to the end of chat file
     add_message_to_file(user_name, message, file_name);

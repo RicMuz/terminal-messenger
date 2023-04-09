@@ -35,6 +35,7 @@ private:
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
     int check_login_data(std::string &user_name, std::string &password);
+    std::string create_chat_file_name(const std::string &user_name, const std::string &other_user_name);
     std::string get_last_n_messages(const std::string &file_name, int n);
     void add_message_to_file(const std::string &user_name, const std::string &message, const std::string &file_name);
 
