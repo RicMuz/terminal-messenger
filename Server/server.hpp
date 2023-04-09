@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -14,6 +15,7 @@ private:
     sf::TcpListener listener;
     sf::SocketSelector selector;
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
+    std::map<std::string, std::string> loged_users;
 
     void connect_client(); // set up tcp connection
     void disconnect_client(sf::TcpSocket *client, size_t position); // end tcp conncetion

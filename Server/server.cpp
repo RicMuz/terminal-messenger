@@ -185,8 +185,11 @@ Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
     sf::Packet answer;
     answer << answer_from_database;
 
-    if(answer_from_database == 0) {
-        std::cout << "User " << user_name << " has loged in on" << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl; 
+    if(answer_from_database == 0) { 
+        std::stringstream user_addres;
+        user_addres << client->getRemoteAddress() << ":" << client->getRemotePort();
+        loged_users[user_addres.str()] = user_name;
+        std::cout << "User " << user_name << " has loged in on " << user_addres.str() << std::endl;
     }
 
     // Send the response
