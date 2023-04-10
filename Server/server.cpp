@@ -299,16 +299,16 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // User wants to add himself as friend
     if(user_name == other_user) {
         std::cout << "Error: user " << user_name << " wants to add himself as friend." << std::endl;
-        packet << 5;
-        send_answer_to_client(packet, "add friend", client);
+        answer << 5;
+        send_answer_to_client(answer, "add friend", client);
         return;
     }
 
     // User wants to add non existing account 
     if(!is_username_used(other_user)) {
         std::cout << "Error: user " << user_name << " wants to add non-existing account as friend" << std::endl;
-        packet << 6;
-        send_answer_to_client(packet, "add friend", client);
+        answer << 6;
+        send_answer_to_client(answer, "add friend", client);
         return;
     }
 
