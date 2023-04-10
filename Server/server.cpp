@@ -121,6 +121,24 @@ Server::send_answer_to_client(sf::Packet &packet, const std::string &type, sf::T
     }
 }
 
+bool
+Server::check_user_and_address(const std::string &user_name, const std::string &type,sf::TcpSocket *client) {
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    sf::Packet answer;
+
+    // Test if the right user is asking
+    if(loged_users[user_address.str()] != user_name) {
+        std::cout << "Error: " << user_address.str() << " wants to " << type << " as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
+        answer << 4;
+        send_answer_to_client(answer, type, client);
+        return false;
+    }
+
+    return true;
+}
+
 //============================================================================================================
 // SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP - SIGN UP
 //============================================================================================================
@@ -271,18 +289,12 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> user_name;
     packet >> other_user;
 
-    std::stringstream user_address;
-    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
-
-    sf::Packet answer;
-
     // Test if the right user is asking
-    if(loged_users[user_address.str()] != user_name) {
-        std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 4;
-        send_answer_to_client(packet, "add friend", client);
+    if(check_user_and_address(user_name, "log in", client)) {
         return;
     }
+
+    sf::Packet answer;
 
     // User wants to add himself as friend
     if(user_name == other_user) {
@@ -332,18 +344,12 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> user_name;
     packet >> other_user;
 
-    std::stringstream user_address;
-    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
-
-    sf::Packet answer;
-
     // Test if the right user is asking
-    if(loged_users[user_address.str()] != user_name) {
-        std::cout << "Error: " << user_address.str() << " wants to open of " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 4;
-        send_answer_to_client(packet, "open chat", client);
+    if(check_user_and_address(user_name, "open chat", client)) {
         return;
     }
+
+    sf::Packet answer;
 
     // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
     // Get the chat file name
@@ -413,18 +419,12 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> other_user;
     packet >> message;
 
-    std::stringstream user_address;
-    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
-
-    sf::Packet answer;
-
     // Test if the right user is asking
-    if(loged_users[user_address.str()] != user_name) {
-        std::cout << "Error: " << user_address.str() << " wants to send message as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 4;
-        send_answer_to_client(packet, "send message", client);
+    if(check_user_and_address(user_name, "log in", client)) {
         return;
     }
+
+    sf::Packet answer;
 
     // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
     // Get the chat file name
@@ -460,18 +460,12 @@ Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
     std::string user_name;
     packet >> user_name;
 
-    std::stringstream user_address;
-    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
-
-    sf::Packet answer;
-
     // Test if the right user is asking
-    if(loged_users[user_address.str()] != user_name) {
-        std::cout << "Error: " << user_address.str() << " wants to send message as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        packet << 4;
-        send_answer_to_client(packet, "send message", client);
+    if(check_user_and_address(user_name, "log in", client)) {
         return;
     }
+
+    sf::Packet answer;
 
     // Create return packet
     answer << 0 << " " << friend_list(user_name);

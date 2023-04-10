@@ -33,6 +33,7 @@ private:
     void list_friends(sf::Packet &packet, sf::TcpSocket *client);
 
     void send_answer_to_client(sf::Packet &packet, const std::string &type, sf::TcpSocket *client);
+    bool check_user_and_address(const std::string &user_name, const std::string &type, sf::TcpSocket *client);
 
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
