@@ -359,7 +359,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     chat = get_last_n_messages(file_name, 10);
 
     // Create an answer with possitive result
-    answer << 0 << chat;
+    answer << 0 << " " << chat;
 
     // Send the response
     send_answer_to_client(answer, "open chat", client);
