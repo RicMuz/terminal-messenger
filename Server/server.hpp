@@ -30,6 +30,7 @@ private:
     void add_friend(sf::Packet &packet, sf::TcpSocket *client);
     void open_chat(sf::Packet &packet, sf::TcpSocket *client);
     void send_message(sf::Packet &packet, sf::TcpSocket *client);
+    void list_friends(sf::Packet &packet, sf::TcpSocket *client);
 
     void send_answer_to_client(sf::Packet &packet, const std::string &type, sf::TcpSocket *client);
 
@@ -40,6 +41,7 @@ private:
     std::string create_chat_file_name(const std::string &user_name, const std::string &other_user_name);
     std::string get_last_n_messages(const std::string &file_name, int n);
     void add_message_to_file(const std::string &user_name, const std::string &message, const std::string &file_name);
+    std::string friend_list(const std::string &user_name);
 
 public:
     Server(unsigned short);

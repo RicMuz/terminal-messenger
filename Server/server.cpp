@@ -95,7 +95,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
     case 2: // logout
         log_out(client);
         break;
-    case 3:
+    case 3: // add users to friend list
         add_friend(packet, client);
         break;
     case 4: // open chat
@@ -104,7 +104,10 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
     case 5: // send message to chat
         send_message(packet, client);
         break;
-    
+    case 6: // lists friends from friend list
+        list_friends(packet, client);
+        break;
+
     default:
         std::cout << "Error: unknown packet type from " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
         break;
@@ -446,4 +449,49 @@ Server::add_message_to_file(const std::string &user_name, const std::string &mes
     // Add the message
     out << user_name << ": " << message << std::endl;
     out.close(); 
+}
+
+//============================================================================================================
+// LIST FRIENDS - LIST FRIENDS - LIST FRIENDS - LIST FRIENDS - LIST FRIENDS - LIST FRIENDS - LIST FRIENDS - LI   
+//============================================================================================================
+
+void
+Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
+    std::string user_name;
+    packet >> user_name;
+
+    std::stringstream user_address;
+    user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
+
+    sf::Packet answer;
+
+    // Test if the right user is asking
+    if(loged_users[user_address.str()] != user_name) {
+        std::cout << "Error: " << user_address.str() << " wants to send message as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
+        packet << 4;
+        send_answer_to_client(packet, "send message", client);
+        return;
+    }
+
+    // Create return packet
+    answer << 0 << " " << friend_list(user_name);
+
+    // Send the response
+    send_answer_to_client(answer, "list friends", client);
+}
+
+std::string
+Server::friend_list(const std::string &user_name) {
+    // Open file 
+    std::ifstream friend_list_stream;
+    friend_list_stream.open(user_name + ".txt");
+
+    // Create string buffer and read the file
+    std::stringstream buffer;
+    buffer << friend_list_stream.rdbuf();
+
+    // Close the file
+    friend_list_stream.close();
+
+    return buffer.str();
 }
