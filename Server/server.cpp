@@ -307,7 +307,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> other_user;
 
     // Test if the right user is asking
-    if(check_user_and_address(user_name, "log in", client)) {
+    if(!check_user_and_address(user_name, "log in", client)) {
         return;
     }
 
@@ -368,7 +368,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> other_user;
 
     // Test if the right user is asking
-    if(check_user_and_address(user_name, "open chat", client)) {
+    if(!check_user_and_address(user_name, "open chat", client)) {
         return;
     }
 
@@ -443,7 +443,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> message;
 
     // Test if the right user is asking
-    if(check_user_and_address(user_name, "log in", client)) {
+    if(!check_user_and_address(user_name, "log in", client)) {
         return;
     }
 
@@ -484,7 +484,7 @@ Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> user_name;
 
     // Test if the right user is asking
-    if(check_user_and_address(user_name, "log in", client)) {
+    if(!check_user_and_address(user_name, "log in", client)) {
         return;
     }
 
