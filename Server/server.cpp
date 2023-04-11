@@ -332,6 +332,12 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // Add friend to friend list file
     add_to_friend_list(user_name, other_user);
 
+    // Create chat file
+    std::string chat_file_name = create_chat_file_name(user_name, other_user);
+    std::ofstream out;
+    out.open(chat_file_name, std::ios::app);
+    out.close(); 
+
     // Create an answer with possitive result
     answer << 0;
 
