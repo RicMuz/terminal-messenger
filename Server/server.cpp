@@ -158,7 +158,6 @@ Server::check_user_and_address(const std::string &user_name, const std::string &
 void
 Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
     // Extract wanted username and password
-    //TODO: what if password or both are missing
     std::string user_name, password;
     packet >> user_name;
     packet >> password;
