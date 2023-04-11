@@ -1,7 +1,7 @@
 ### Server
 - [X] answer packet spaces betweem data and return code !!!!
 - [X] file handling (all closes, good file names, create dirs)
-- [] add more log prints
+- [X] add more log prints
 - [X] create friend_list file when sign up
 - [X] create chat file when adding friends
 - [X] repetetive code (return code 4)

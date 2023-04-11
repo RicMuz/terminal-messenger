@@ -24,13 +24,13 @@ Server::Run() {
     }
 }
 
-Server::Server(unsigned short port) { //TODO: should check if database of users ("account_database.txt") exists, and if not then create empty
+Server::Server(unsigned short port) { 
     std::cout << "Starting the server" << std::endl;
 
     this->port = port;
 
     if(listener.listen(port) != sf::Socket::Done) {
-        std::cout << "Error: could not listen" << std::endl; // Should end the program
+        std::cout << "Error: could not listen" << std::endl;
         return;
     }
 
@@ -87,6 +87,7 @@ Server::receive_packet(sf::TcpSocket *client, size_t position) {
         return;
     }
 
+    std::cout << "Recieved good packet" << std::endl;
     // Possibly good packet
     manage_packet(packet, client);
 }
@@ -131,6 +132,8 @@ Server::send_answer_to_client(sf::Packet &packet, const std::string &type, sf::T
     if(client->send(packet) != sf::Socket::Done) {
         std::cout << "Error: could not send response for " << type <<" request of " << client->getRemoteAddress() << ":" << client->getRemotePort() << std::endl;
     }
+
+    std::cout << "Answer send successfuly" << std::endl;
 }
 
 bool
@@ -157,6 +160,8 @@ Server::check_user_and_address(const std::string &user_name, const std::string &
 
 void
 Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling sign up request." << std::endl;
+
     // Extract wanted username and password
     std::string user_name, password;
     packet >> user_name;
@@ -226,8 +231,9 @@ Server::add_user_to_database(const std::string &user_name, const std::string &pa
 
 void
 Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling log in request." << std::endl;
+
     // Extract username and password
-    //TODO: what if password or both are missing
     std::string user_name, password;
     packet >> user_name;
     packet >> password;
@@ -288,6 +294,8 @@ Server::check_login_data(std::string &user_name, std::string &password) {
 
 void
 Server::log_out(sf::TcpSocket *client) {
+    std::cout << "Handling log out request." << std::endl;
+
     // Get user address and port
     std::stringstream user_address;
     user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
@@ -302,6 +310,8 @@ Server::log_out(sf::TcpSocket *client) {
 
 void
 Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling add friend request." << std::endl;
+
     std::string user_name, other_user, friendlist_file_name;
     packet >> user_name;
     packet >> other_user;
@@ -364,6 +374,8 @@ Server::add_to_friend_list(const std::string &user_name, const std::string &othe
 
 void
 Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling open chat request." << std::endl;
+
     std::string user_name, other_user, file_name, chat;
     packet >> user_name;
     packet >> other_user;
@@ -467,6 +479,8 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
 
 void
 Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling send message request." << std::endl;
+
     std::string user_name, other_user, message, file_name;
     packet >> user_name;
     packet >> other_user;
@@ -486,7 +500,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
         send_answer_to_client(answer, "open chat", client);
         return;
     }
-    
+
     // Get the chat file name
     file_name = create_chat_file_name(user_name, other_user);
 
@@ -517,6 +531,8 @@ Server::add_message_to_file(const std::string &user_name, const std::string &mes
 
 void
 Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
+    std::cout << "Handling list friends request." << std::endl;
+
     std::string user_name;
     packet >> user_name;
 
