@@ -36,7 +36,7 @@ Server::Server(unsigned short port) {
 
     // Check or create account_database.txt
     std::ofstream out;
-    out.open("account_database.txt", std::ios::app);
+    out.open(user_database_name, std::ios::app);
 
     if(!out.good()) {
         std::cout << "Error: could not open account database" << std::endl;
@@ -197,7 +197,7 @@ Server::is_username_used(std::string &user_name) {
     bool to_return = false; // Need to close the file before returning the value
 
     // Cycle through all user names from database
-    std::ifstream account_database("account_database.txt");
+    std::ifstream account_database(user_database_name);
     for(std::string line; getline(account_database, line);) {
         std::stringstream line_steam(line);
         std::string known_user;
@@ -218,7 +218,7 @@ void
 Server::add_user_to_database(const std::string &user_name, const std::string &password) {
     // Open database in append mode 
     std::ofstream out;
-    out.open("account_database.txt", std::ios::app);
+    out.open(user_database_name, std::ios::app);
 
     // Add new user
     out << user_name << " " << password << std::endl;
@@ -266,7 +266,7 @@ Server::check_login_data(std::string &user_name, std::string &password) {
     */
 
     // Cycle through all user names from database
-    std::ifstream account_database("account_database.txt");
+    std::ifstream account_database(user_database_name);
     for(std::string line; getline(account_database, line);) {
         std::stringstream line_stream(line);
         std::string user_name_database, password_database;

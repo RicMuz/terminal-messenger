@@ -17,6 +17,7 @@ private:
     sf::SocketSelector selector;
     std::vector<std::unique_ptr<sf::TcpSocket>> clients;
     std::map<std::string, std::string> loged_users;
+    const std::string user_database_name = "account_databse.txt";
 
     void connect_client(); // set up tcp connection
     void disconnect_client(sf::TcpSocket *client, size_t position); // end tcp conncetion

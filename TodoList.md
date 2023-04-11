@@ -6,8 +6,8 @@
 - [X] create chat file when adding friends
 - [X] repetetive code (return code 4)
 - [X] send message and open chat without friendlist (check if the guy is in the friend list, if yes than he exists because existance was controlled while adding)
-- [] control if anwer packets are send back
-- [] names of files can be const strings 
+- [X] control if answer packets are send back
+- [X] names of files can be const strings 
 
 ### Client
 - [] check if all neccessary data are send (especially usr and pwd)
