@@ -331,6 +331,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
 
     // Add friend to friend list file
     add_to_friend_list(user_name, other_user);
+    add_to_friend_list(other_user, user_name);
 
     // Create chat file
     std::string chat_file_name = create_chat_file_name(user_name, other_user);
@@ -374,7 +375,14 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
 
     sf::Packet answer;
 
-    // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
+    // Check if they are friends
+    if(!are_friends(user_name, other_user)) {
+        answer << 7;
+        std::cout << "Error: user wants to open non-existing chat";
+        send_answer_to_client(answer, "open chat", client);
+        return;
+    }
+
     // Get the chat file name
     file_name = create_chat_file_name(user_name, other_user);
 
@@ -395,6 +403,28 @@ Server::create_chat_file_name(const std::string &user_name, const std::string &o
     } else {
         return other_user_name + "-" + user_name + ".txt";
     }
+}
+
+bool
+Server::are_friends(const std::string &user_name, const std::string &other_user) {
+    bool to_return = false;
+
+    // Open file 
+    std::ifstream friend_list_stream;
+    friend_list_stream.open(user_name + ".txt");
+
+    // Check all lines if other user is in the friend list
+    for(std::string line; getline(friend_list_stream, line);) {
+        if(other_user == line) {
+            to_return = true;
+            break;
+        }
+    }
+
+    // Close the file
+    friend_list_stream.close();
+
+    return to_return;
 }
 
 std::string
@@ -449,7 +479,14 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
 
     sf::Packet answer;
 
-    // TODO: other user can not exist (typo...), file might not exist (typo, aren't friens)
+    // Check if they are friends
+    if(!are_friends(user_name, other_user)) {
+        answer << 7;
+        std::cout << "Error: user wants to open non-existing chat";
+        send_answer_to_client(answer, "open chat", client);
+        return;
+    }
+    
     // Get the chat file name
     file_name = create_chat_file_name(user_name, other_user);
 

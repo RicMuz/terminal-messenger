@@ -38,6 +38,7 @@ return codes:
 - 4 = user_name from packet is different than one with which user log in on given address (general)
 - 5 = user wants to add himself as friend (add friend request)
 - 6 = user wants to add account which does not exist (add friend request)
+- 7 = users are not friends
 
 data differs from type of requests:
 - 4 -> last 10 messages
