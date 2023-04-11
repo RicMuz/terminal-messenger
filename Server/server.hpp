@@ -47,6 +47,6 @@ private:
     std::string friend_list(const std::string &user_name);
 
 public:
-    Server(unsigned short);
+    Server(unsigned short port);
     void Run();
 };

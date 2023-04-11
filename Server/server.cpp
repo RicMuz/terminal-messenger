@@ -46,6 +46,7 @@ Server::Server(unsigned short port) {
     out.close();
 
     std::cout << "Server started" << std::endl;
+    std::cout << "Listening on port: " << port << std::endl;
 }
 
 void
