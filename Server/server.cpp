@@ -174,6 +174,12 @@ Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
     } else {
         // Send successful response and add to database
         add_user_to_database(user_name, password);
+
+        // Create friend list file
+        std::ofstream friend_list_stream;
+        friend_list_stream.open(user_name + ".txt", std::ios::app);
+        friend_list_stream.close();
+
         answer << 0;
     }
 
