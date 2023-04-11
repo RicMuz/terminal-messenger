@@ -31,7 +31,19 @@ Server::Server(unsigned short port) { //TODO: should check if database of users 
 
     if(listener.listen(port) != sf::Socket::Done) {
         std::cout << "Error: could not listen" << std::endl; // Should end the program
+        return;
     }
+
+    // Check or create account_database.txt
+    std::ofstream out;
+    out.open("account_database.txt", std::ios::app);
+
+    if(!out.good()) {
+        std::cout << "Error: could not open account database" << std::endl;
+        return;
+    }
+
+    out.close();
 
     std::cout << "Server started" << std::endl;
 }
@@ -382,7 +394,7 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
     // Test if the file can be openned 
     if(!chat_stream.good()) {
         std::cout << "Error: can't open chat file " << file_name << std::endl;
-        return "";
+        return "Error: can't open chat file, contact administrator";
     }
 
     std::queue<std::string> lines;
