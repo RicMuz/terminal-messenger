@@ -18,3 +18,16 @@ Client::Connect(const std::string &address, const unsigned short port) {
     return true;
 }
 
+void
+Client::Run() {
+    while(true) {
+        // Get correct command and connected data from user
+        get_user_input();
+
+        // Ask server and get answer from server
+        handle_request();
+
+        // Print answer to user
+        print_answer();
+    }
+}

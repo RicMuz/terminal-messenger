@@ -11,9 +11,14 @@ private:
     bool connected;
     bool logged_in;
 
+    
     void get_user_input();
+
+    void handle_request();
     void send_packet(sf::Packet &packet);
     void receive_packet();
+
+    void print_answer();
 public:
     Client();
     bool Connect(const std::string &address, const unsigned short port);
