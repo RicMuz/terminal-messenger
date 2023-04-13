@@ -81,11 +81,40 @@ Client::print_before_log_in_help() {
 }
 
 void
+Client::get_user_name_and_password() {
+    std::string user_name, password;
+
+    std::cout << "user name: ";
+    bool good_user_name = false;
+
+    while(!good_user_name) {
+        std::cin >> user_name;
+        good_user_name = check_user_name(user_name);
+        if(!good_user_name) {
+            std::cout << "This username is not allowed, try again: ";
+        }
+    }
+
+    std::cout << "password: ";
+    bool good_password = false;
+
+    while (!good_password) {
+        std::cin >> password;
+        good_password = check_password(password);
+        if(!good_password) {
+            std::cout << "Bad password, password cannot contain any type of white space, try again: ";
+        }
+    }
+
+    data_to_send = user_name + " " + password;
+}
+
+void
 Client::after_log_in_interface() {
     // Cycle while all necessary data aren't collected
     while(true) {
         std::string input;
-        std::cout << user_name <<">>>";
+        std::cout << logged_user_name <<">>>";
         std::cin >> input;
 
         if(input == "help") {
