@@ -16,5 +16,6 @@ private:
     void receive_packet();
 public:
     Client();
+    bool Connect(const std::string &address, const unsigned short port);
     void Run();
 };
