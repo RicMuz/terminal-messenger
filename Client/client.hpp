@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <map>
 #include <SFML/Network.hpp>
 
 class Client {
@@ -10,9 +11,19 @@ private:
     std::string user_name;
     bool connected;
     bool logged_in;
+    std::string data_to_send;
+    int type_of_data;
 
     
     void get_user_input();
+
+    void before_log_in_interface();
+    void print_before_log_in_help();
+    void get_user_name_and_password();
+
+    void after_log_in_interface();
+    void print_after_log_in_help();
+    void get_name_of_friend();
 
     void handle_request();
     void send_packet(sf::Packet &packet);
