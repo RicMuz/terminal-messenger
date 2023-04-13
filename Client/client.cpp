@@ -74,6 +74,13 @@ Client::before_log_in_interface() {
 }
 
 void
+Client::print_before_log_in_help() {
+    std::cout << "login\tto log in" << std::endl;
+    std::cout << "signup\tto create a new account" <<std::endl;
+    std::cout << "exit\tto exit the app" <<std::endl;
+}
+
+void
 Client::after_log_in_interface() {
     // Cycle while all necessary data aren't collected
     while(true) {
