@@ -109,6 +109,17 @@ Client::get_user_name_and_password() {
     data_to_send = user_name + " " + password;
 }
 
+bool
+Client::check_user_name(const std::string &user_name) {
+    // Check if the user name contains just alphanumeric symbols
+    for(auto && c:user_name) {
+        if(!isalnum(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void
 Client::after_log_in_interface() {
     // Cycle while all necessary data aren't collected
