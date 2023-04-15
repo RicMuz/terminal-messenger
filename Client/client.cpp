@@ -120,6 +120,17 @@ Client::check_user_name(const std::string &user_name) {
     return true;
 }
 
+bool
+Client::check_password(const std::string &password) {
+    // Check if password does not contain white space
+    for(auto && c:password) {
+        if(isspace(c)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 void
 Client::after_log_in_interface() {
     // Cycle while all necessary data aren't collected
