@@ -162,3 +162,12 @@ Client::after_log_in_interface() {
         }
     }
 }
+
+void
+Client::print_after_log_in_help() {
+    std::cout << "ls\tto list all friends" << std::endl;
+    std::cout << "open\tfriend_name to access chat" << std::endl;
+    std::cout << "add\tfriend_name to add friend to your list of friends (if exists in database of people)" << std::endl;
+    std::cout << "logout\tto log out" << std::endl;
+    std::cout << "exit\tto log out and exit the app" << std::endl; 
+}
