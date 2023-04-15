@@ -154,6 +154,7 @@ Client::after_log_in_interface() {
             break;
         } else if (input == "logout") {
             type_of_data = 2;
+            break;
         } else if (input == "exit") {
             type_of_data = -1;
             break;
@@ -166,8 +167,25 @@ Client::after_log_in_interface() {
 void
 Client::print_after_log_in_help() {
     std::cout << "ls\tto list all friends" << std::endl;
-    std::cout << "open\tfriend_name to access chat" << std::endl;
-    std::cout << "add\tfriend_name to add friend to your list of friends (if exists in database of people)" << std::endl;
+    std::cout << "open friend_name\t to access chat" << std::endl;
+    std::cout << "add friend_name\t to add friend to your list of friends (if exists in database of people)" << std::endl;
     std::cout << "logout\tto log out" << std::endl;
     std::cout << "exit\tto log out and exit the app" << std::endl; 
+}
+
+void
+Client::get_name_of_friend() {
+    std::string friends_name;
+    std::cin >> friends_name;
+
+    // Wait till good data are inserted
+    while(true) {
+        if(check_user_name(friends_name) && friends_name != "") {
+            break;
+        }
+        std::cout << "Wrong or missing friend's name try again: ";
+        std::cin >> friends_name;
+    }
+
+    data_to_send = friends_name;
 }
