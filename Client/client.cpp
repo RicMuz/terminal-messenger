@@ -38,6 +38,10 @@ Client::Run() {
 
 void
 Client::get_user_input() {
+    // Empty request before
+    data_to_send.clear();
+    to_send.clear();
+
     // Choose current interface
     if(!logged_in) {
         before_log_in_interface();
@@ -210,4 +214,13 @@ Client::handle_request() {
     default:
         break;
     }
+}
+
+void
+Client::create_packet() {
+    // Make an empty packet
+    to_send.clear();
+
+    // Make the packet
+    to_send << type_of_data << " " << data_to_send;
 }
