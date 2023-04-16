@@ -224,3 +224,12 @@ Client::create_packet() {
     // Make the packet
     to_send << type_of_request << " " << data_to_send;
 }
+
+void
+Client::send_packet(sf::Packet &packet) {
+    // Try to send the packet, if fails than exit
+    if(socket.send(packet) != sf::Socket::Done) {
+        std::cout << "Error: could not send packet, exiting program" << std::endl;
+        exit = true;
+    }
+}

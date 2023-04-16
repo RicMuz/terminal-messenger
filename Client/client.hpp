@@ -13,6 +13,7 @@ private:
     bool logged_in;
     std::string data_to_send;
     int type_of_request;
+    bool exit;
 
     
     void get_user_input();
@@ -30,8 +31,8 @@ private:
     void handle_request();
     void create_packet();
     void send_packet(sf::Packet &packet);
-    void receive_packet();
 
+    void receive_packet();
     void print_answer();
 public:
     Client();
