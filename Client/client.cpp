@@ -62,14 +62,14 @@ Client::before_log_in_interface() {
             print_before_log_in_help();
         } else if (input == "signup") {
             get_user_name_and_password();
-            type_of_data = 0;
+            type_of_request = 0;
             break;
         } else if (input == "login") {
             get_user_name_and_password();
-            type_of_data = 1;
+            type_of_request = 1;
             break;
         } else if (input == "exit") {
-            type_of_data = -1;
+            type_of_request = -1;
             break;
         } else {
             std::cout << "Unknown command. Type help to print commands." << std::endl;
@@ -146,21 +146,21 @@ Client::after_log_in_interface() {
         if(input == "help") {
             print_after_log_in_help();
         } else if (input == "ls") {
-            type_of_data = 6;
+            type_of_request = 6;
             break; 
         } else if (input == "open") {
             get_name_of_friend();
-            type_of_data = 4;
+            type_of_request = 4;
             break;
         } else if (input == "add") {
             get_name_of_friend();
-            type_of_data = 3;
+            type_of_request = 3;
             break;
         } else if (input == "logout") {
-            type_of_data = 2;
+            type_of_request = 2;
             break;
         } else if (input == "exit") {
-            type_of_data = -1;
+            type_of_request = -1;
             break;
         } else {
             std::cout << "Unknown command. Type help to print commands." << std::endl;
@@ -201,7 +201,7 @@ Client::get_name_of_friend() {
 
 void
 Client::handle_request() {
-    switch (type_of_data)
+    switch (type_of_request)
     {
     case -1: // exit
         // need to log out
@@ -222,5 +222,5 @@ Client::create_packet() {
     to_send.clear();
 
     // Make the packet
-    to_send << type_of_data << " " << data_to_send;
+    to_send << type_of_request << " " << data_to_send;
 }

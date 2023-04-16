@@ -13,7 +13,7 @@ private:
     bool connected;
     bool logged_in;
     std::string data_to_send;
-    int type_of_data;
+    int type_of_request;
 
     
     void get_user_input();
