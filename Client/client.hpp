@@ -10,7 +10,6 @@ private:
     sf::TcpSocket socket;
     sf::Packet to_send;
     std::string logged_user_name;
-    bool connected;
     bool logged_in;
     std::string data_to_send;
     int type_of_request;

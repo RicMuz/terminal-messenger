@@ -44,3 +44,14 @@ data differs from type of requests:
 - 4 -> last 10 messages
 - 6 -> friend list
 - all other are empty
+
+## Client
+
+### Class variables
+
+- ```int type_of_requst``` tells what the program should do next and if sending packet is neccesary, than it contains what type of packet is needed to be send to the server
+- ```sf::TcpSocket socket``` is TCP socket connected to the server
+- ```sf::Packet to_send``` is packet containing the request, which will be send to the server
+- ```std::string logged_user_name``` contains the name of the user who is logged in (before sign up it is empty)
+- ```bool logged_in``` contains information if any user is logged in in the client (deciding which interface should be used)
+- ```std::string data_to_send``` cointains additional information that server needs for current request 
