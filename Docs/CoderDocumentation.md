@@ -55,3 +55,4 @@ data differs from type of requests:
 - ```std::string logged_user_name``` contains the name of the user who is logged in (before sign up it is empty)
 - ```bool logged_in``` contains information if any user is logged in in the client (deciding which interface should be used)
 - ```std::string data_to_send``` cointains additional information that server needs for current request 
+- ```bool exit``` tells the program if user wants to exit the program

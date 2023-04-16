@@ -24,8 +24,18 @@ Client::Run() {
         // Get correct command and connected data from user
         get_user_input();
 
+        // If user wants to exit and isn't logged in simply exit the program
+        if(exit && !logged_in) {
+            break;
+        }
+
         // Ask server and get answer from server
         handle_request();
+
+        // If user wants to exit and is logged in send packet to log out and exit
+        if(exit) {
+            break;
+        }
 
         // Print answer to user
         print_answer();
@@ -41,6 +51,7 @@ Client::get_user_input() {
     // Empty request before
     data_to_send.clear();
     to_send.clear();
+    exit = false;
 
     // Choose current interface
     if(!logged_in) {
@@ -69,7 +80,7 @@ Client::before_log_in_interface() {
             type_of_request = 1;
             break;
         } else if (input == "exit") {
-            type_of_request = -1;
+            exit = true;
             break;
         } else {
             std::cout << "Unknown command. Type help to print commands." << std::endl;
@@ -160,7 +171,8 @@ Client::after_log_in_interface() {
             type_of_request = 2;
             break;
         } else if (input == "exit") {
-            type_of_request = -1;
+            type_of_request = 2; // before exiting the program we need to log out
+            exit = true;
             break;
         } else {
             std::cout << "Unknown command. Type help to print commands." << std::endl;
@@ -203,9 +215,6 @@ void
 Client::handle_request() {
     switch (type_of_request)
     {
-    case -1: // exit
-        // need to log out
-        break;
     case 0|1|2|3|4|5|6: // requires answer from server
         create_packet();
         send_packet(to_send);
