@@ -8,6 +8,7 @@
 class Client {
 private:
     sf::TcpSocket socket;
+    sf::Packet to_send;
     std::string logged_user_name;
     bool connected;
     bool logged_in;
@@ -28,6 +29,7 @@ private:
     void get_name_of_friend();
 
     void handle_request();
+    void create_packet();
     void send_packet(sf::Packet &packet);
     void receive_packet();
 

@@ -11,3 +11,4 @@
 
 ### Client
 - [] check if all neccessary data are send (especially usr and pwd)
+- [] when user enters login/signup/add/open... he can't get back -> add back (return codes will be needed)

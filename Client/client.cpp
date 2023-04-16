@@ -189,3 +189,25 @@ Client::get_name_of_friend() {
 
     data_to_send = friends_name;
 }
+
+
+//============================================================================================================
+// HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDL
+//============================================================================================================
+
+void
+Client::handle_request() {
+    switch (type_of_data)
+    {
+    case -1: // exit
+        // need to log out
+        break;
+    case 0|1|2|3|4|5|6: // requires answer from server
+        create_packet();
+        send_packet(to_send);
+        break;
+    
+    default:
+        break;
+    }
+}
