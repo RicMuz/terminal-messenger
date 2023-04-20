@@ -57,6 +57,7 @@ Client::get_user_input() {
     if(!logged_in) {
         before_log_in_interface();
     } else {
+        data_to_send.push_back(logged_user_name);
         after_log_in_interface();
     }
 }
@@ -217,13 +218,14 @@ void
 Client::handle_request() {
     switch (type_of_request)
     {
-    case 0|1|2|3|4|5|6: // requires answer from server
+    case 0 ... 6: // requires answer from server
         create_packet();
         send_packet(to_send);
         break;
     
     default:
-        std::cout << "Erorr: unknown request" << std::endl;
+        std::cout << "Erorr: unknown request " << type_of_request << std::endl;
+        exit = true;
         break;
     }
 }
@@ -288,7 +290,7 @@ Client::print_answer() {
         case 3:
             std::cout << "You're friends now." << std::endl; 
             break;
-        case 4|6:
+        case 4: case 6:
             received_packet >> received_data;
             std::cout << received_data;
             break;
