@@ -38,7 +38,7 @@ Client::Run() {
         }
 
         // Print answer to user
-        print_answer();
+        receive_packet();
     }
 }
 
@@ -221,6 +221,7 @@ Client::handle_request() {
         break;
     
     default:
+        std::cout << "Erorr: unknown request" << std::endl;
         break;
     }
 }
@@ -241,4 +242,19 @@ Client::send_packet(sf::Packet &packet) {
         std::cout << "Error: could not send packet, exiting program" << std::endl;
         exit = true;
     }
+}
+
+//============================================================================================================
+// PRINT ANSWER - PRINT ANSWER - PRINT ANSWER - PRINT ANSWER - PRINT ANSWER - PRINT ANSWER - PRINT ANSWER - PR 
+//============================================================================================================
+
+void
+Client::receive_packet() {
+    while(true) {
+        if(socket.receive(received_packet)==sf::Socket::Done) {
+            break;
+        }
+    }
+
+
 }

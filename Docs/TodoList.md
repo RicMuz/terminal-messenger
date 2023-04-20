@@ -1,3 +1,6 @@
+### Both
+- [] wrong packet dealing MAJOR ERROR
+
 ### Server
 - [X] answer packet spaces betweem data and return code !!!!
 - [X] file handling (all closes, good file names, create dirs)
@@ -10,5 +13,5 @@
 - [X] names of files can be const strings 
 
 ### Client
-- [] check if all neccessary data are send (especially usr and pwd)
+- [] check if all neccessary data are send (especially usr and pwd), and after login usr who is logged in as the first after request code 
 - [] when user enters login/signup/add/open... he can't get back -> add back (return codes will be needed)

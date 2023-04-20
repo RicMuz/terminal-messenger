@@ -8,11 +8,17 @@
 class Client {
 private:
     sf::TcpSocket socket;
+
     sf::Packet to_send;
     std::string logged_user_name;
     bool logged_in;
     std::string data_to_send;
     int type_of_request;
+
+    sf::Packet received_packet;
+    int received_code;
+    std::string received_data;
+
     bool exit;
 
     
