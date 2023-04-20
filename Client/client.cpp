@@ -121,6 +121,7 @@ Client::get_user_name_and_password() {
         }
     }
 
+    logged_user_name = user_name;
     data_to_send = user_name + " " + password;
 }
 
@@ -250,11 +251,76 @@ Client::send_packet(sf::Packet &packet) {
 
 void
 Client::receive_packet() {
+    received_packet.clear();
+
     while(true) {
         if(socket.receive(received_packet)==sf::Socket::Done) {
             break;
         }
     }
 
+    print_answer();
+}
 
+void
+Client::print_answer() {
+    received_packet >> received_code;
+
+    switch (received_code)
+    {
+    case 0:
+        switch (type_of_request)
+        {
+        case 0:
+            std::cout << "Sign up successful, try log in." << std::endl;
+            break;
+        case 1:
+            std::cout << "Log in successful." << std::endl;
+            logged_in = true;
+            break;
+        case 2:
+            std::cout << "Log out successful." << std::endl;
+            logged_in = false;
+        case 3:
+            std::cout << "You're friends now." << std::endl; 
+            break;
+        case 4|6:
+            received_packet >> received_data;
+            std::cout << received_data;
+            break;
+        case 5:
+            std::cout << "OK" << std::endl;
+            break;
+
+        default:
+            std::cout << "Success for unknown request" << std::endl;
+            break;
+        }
+        break;
+    case 1:
+        std::cout << "Error: user already exists, try different name." << std::endl;
+        break;
+    case 2:
+        std::cout << "Error: wrong password, try again" << std::endl;
+        break;
+    case 3:
+        std::cout << "Error: user does not exist, try again." << std::endl;
+        break;
+    case 4:
+        std::cout << "Error: unauthorized access, contact admin." << std::endl;
+        break;
+    case 5:
+        std::cout << "Error: you can't add yourself as friend." << std::endl;
+        break;
+    case 6:
+        std::cout << "Error: user does not exist." << std::endl;
+        break;
+    case 7:
+        std::cout << "Error: you need to be friends to open chat." << std::endl;
+        break;
+    
+    default:
+        std::cout << "Error: unknown return code." << std::endl;
+        break;
+    }
 }
