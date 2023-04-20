@@ -403,7 +403,8 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     chat = get_last_n_messages(file_name, 10);
 
     // Create an answer with possitive result
-    answer << 0 << " " << chat;
+    answer << 0;
+    answer << chat;
 
     // Send the response
     send_answer_to_client(answer, "open chat", client);
@@ -545,7 +546,8 @@ Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
     sf::Packet answer;
 
     // Create return packet
-    answer << 0 << " " << friend_list(user_name);
+    answer << 0;
+    answer << friend_list(user_name);
 
     // Send the response
     send_answer_to_client(answer, "list friends", client);
