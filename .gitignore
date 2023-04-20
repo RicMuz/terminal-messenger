@@ -31,8 +31,12 @@
 *.out
 *.app
 
-#vscode files
+# vscode files
 .vscode
 
-#Cmake build file
+# Cmake build file
 build
+
+# Files that program makes
+Client/*.txt
+Server/*.txt
