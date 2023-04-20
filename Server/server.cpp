@@ -68,6 +68,7 @@ Server::connect_client() {
 void
 Server::disconnect_client(sf::TcpSocket *client, size_t position) {
     std::cout << client->getRemoteAddress() << ":" << client->getRemotePort() << " disconnected" << std::endl;
+    selector.remove(*client);
     client->disconnect();
     clients.erase(clients.begin() + position);
 }
