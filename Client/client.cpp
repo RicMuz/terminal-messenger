@@ -122,7 +122,8 @@ Client::get_user_name_and_password() {
     }
 
     logged_user_name = user_name;
-    data_to_send = user_name + " " + password;
+    data_to_send.push_back(user_name);
+    data_to_send.push_back(password);
 }
 
 bool
@@ -204,7 +205,7 @@ Client::get_name_of_friend() {
         std::cin >> friends_name;
     }
 
-    data_to_send = friends_name;
+    data_to_send.push_back(friends_name);
 }
 
 
@@ -233,7 +234,10 @@ Client::create_packet() {
     to_send.clear();
 
     // Make the packet
-    to_send << type_of_request << " " << data_to_send;
+    to_send << type_of_request;
+    for(auto && s:data_to_send) {
+        to_send << s;
+    }
 }
 
 void

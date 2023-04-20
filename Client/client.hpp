@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <iostream>
 #include <map>
 #include <SFML/Network.hpp>
@@ -12,7 +13,7 @@ private:
     sf::Packet to_send;
     std::string logged_user_name;
     bool logged_in;
-    std::string data_to_send;
+    std::vector<std::string> data_to_send;
     int type_of_request;
 
     sf::Packet received_packet;
