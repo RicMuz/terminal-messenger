@@ -67,7 +67,13 @@ Server::connect_client() {
 
 void
 Server::disconnect_client(sf::TcpSocket *client, size_t position) {
-    std::cout << client->getRemoteAddress() << ":" << client->getRemotePort() << " disconnected" << std::endl;
+    std::stringstream user_address_sream;
+    user_address_sream << client->getRemoteAddress() << ":" << client->getRemotePort();
+    std::cout << user_address_sream.str() << " disconnected" << std::endl;
+    if(loged_users.count(user_address_sream.str())) {
+        std::cout << "User haven't logged out. Requesting log out from server." << std::endl;
+        log_out(client, true);
+    }
     selector.remove(*client);
     client->disconnect();
     clients.erase(clients.begin() + position);
@@ -108,7 +114,7 @@ Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
         log_in(packet, client);
         break;
     case 2: // logout
-        log_out(client);
+        log_out(client, false);
         break;
     case 3: // add users to friend list
         add_friend(packet, client);
@@ -295,7 +301,7 @@ Server::check_login_data(std::string &user_name, std::string &password) {
 //============================================================================================================
 
 void
-Server::log_out(sf::TcpSocket *client) {
+Server::log_out(sf::TcpSocket *client, bool from_server) {
     std::cout << "Handling log out request." << std::endl;
 
     // Get user address and port
@@ -304,6 +310,14 @@ Server::log_out(sf::TcpSocket *client) {
 
     // Delete it from map
     loged_users.erase(user_address.str());
+
+    if(!from_server) {
+        // Create packet with successful answer
+        sf::Packet answer;
+        answer << 0;
+
+        send_answer_to_client(answer, "logout", client);
+    }
 }
 
 //============================================================================================================
