@@ -240,6 +240,12 @@ Client::after_log_in_interface_message_room() {
     }
 }
 
+void
+Client::print_message_room_help() {
+    std::cout << "send $(message)\tto send message" << std::endl;
+    std::cout << "leave\tto exit to main menu" <<std::endl;
+}
+
 
 //============================================================================================================
 // HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDLE REQUEST - HANDL
