@@ -31,7 +31,7 @@ private:
     bool check_user_name(const std::string &user_name); // should contain just alphabet and numbers
     bool check_password(const std::string &password); // should not contain any whitespace
 
-    void after_log_in_interface();
+    void after_log_in_interface_menu();
     void print_after_log_in_help();
     void get_name_of_friend();
 

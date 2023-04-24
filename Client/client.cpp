@@ -58,7 +58,7 @@ Client::get_user_input() {
         before_log_in_interface();
     } else {
         data_to_send.push_back(logged_user_name);
-        after_log_in_interface();
+        after_log_in_interface_menu();
     }
 }
 
@@ -150,7 +150,7 @@ Client::check_password(const std::string &password) {
 }
 
 void
-Client::after_log_in_interface() {
+Client::after_log_in_interface_menu() {
     // Cycle while all necessary data aren't collected
     while(true) {
         std::string input;
