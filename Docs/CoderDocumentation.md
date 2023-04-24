@@ -56,3 +56,8 @@ data differs from type of requests:
 - ```bool logged_in``` contains information if any user is logged in in the client (deciding which interface should be used)
 - ```std::string data_to_send``` cointains additional information that server needs for current request 
 - ```bool exit``` tells the program if user wants to exit the program
+
+### Type of requests
+
+- 0-99 coresponds to request packet codes
+- 100 - leave the chat room

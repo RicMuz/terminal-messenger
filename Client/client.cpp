@@ -58,7 +58,12 @@ Client::get_user_input() {
         before_log_in_interface();
     } else {
         data_to_send.push_back(logged_user_name);
-        after_log_in_interface_menu();
+        if(in_chat_room) {
+            data_to_send.push_back(friend_name);
+            after_log_in_interface_message_room();
+        } else {
+            after_log_in_interface_menu();
+        }
     }
 }
 
@@ -168,6 +173,7 @@ Client::after_log_in_interface_menu() {
             break;
         } else if (input == "add") {
             get_name_of_friend();
+            in_chat_room = true;
             type_of_request = 3;
             break;
         } else if (input == "logout") {
@@ -206,7 +212,32 @@ Client::get_name_of_friend() {
         std::cin >> friends_name;
     }
 
+    friend_name = friends_name;
     data_to_send.push_back(friends_name);
+}
+
+void
+Client::after_log_in_interface_message_room() {
+    while(true) {
+        std::string input;
+        std::cout << logged_user_name << "-" << friend_name <<">>>";
+        std::cin >> input;
+
+        if(input == "help") {
+            print_message_room_help();
+        } else if(input == "send") {
+            type_of_request = 5;
+            std::string message;
+            getline(std::cin, message); // TODO: get rid of leading and trailing white spaces
+            data_to_send.push_back(message);
+            break;
+        } else if(input == "leave") {
+            type_of_request = 100;
+            break;
+        } else {
+            std::cout << "Unknown command. Type help to print commands." << std::endl;
+        }
+    }
 }
 
 
@@ -221,6 +252,11 @@ Client::handle_request() {
     case 0 ... 6: // requires answer from server
         create_packet();
         send_packet(to_send);
+        break;
+
+    case 100:
+        in_chat_room = false;
+        friend_name.clear();
         break;
     
     default:

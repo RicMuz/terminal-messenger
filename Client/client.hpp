@@ -13,6 +13,10 @@ private:
     sf::Packet to_send;
     std::string logged_user_name;
     bool logged_in;
+    
+    bool in_chat_room;
+    std::string friend_name;
+
     std::vector<std::string> data_to_send;
     int type_of_request;
 
@@ -34,6 +38,9 @@ private:
     void after_log_in_interface_menu();
     void print_after_log_in_help();
     void get_name_of_friend();
+
+    void after_log_in_interface_message_room();
+    void print_message_room_help();
 
     void handle_request();
     void create_packet();
