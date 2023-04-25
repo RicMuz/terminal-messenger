@@ -2,6 +2,9 @@
 
 Client::Client() {
     std::cout << "Terminal messenger started" << std::endl;
+    logged_in = false;
+    in_chat_room = false;
+    exit = false;
 }
 
 bool
@@ -37,8 +40,10 @@ Client::Run() {
             break;
         }
 
-        // Print answer to user
-        receive_packet();
+        if(should_receive_packet) {
+            // Print answer to user
+            receive_packet();
+        }
     }
 }
 
@@ -169,11 +174,11 @@ Client::after_log_in_interface_menu() {
             break; 
         } else if (input == "open") {
             get_name_of_friend();
+            in_chat_room = true;
             type_of_request = 4;
             break;
         } else if (input == "add") {
             get_name_of_friend();
-            in_chat_room = true;
             type_of_request = 3;
             break;
         } else if (input == "logout") {
@@ -257,11 +262,13 @@ Client::handle_request() {
     {
     case 0 ... 6: // requires answer from server
         create_packet();
+        should_receive_packet = true;
         send_packet(to_send);
         break;
 
     case 100:
         in_chat_room = false;
+        should_receive_packet = false;
         friend_name.clear();
         break;
     

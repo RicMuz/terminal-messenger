@@ -19,6 +19,7 @@ private:
 
     std::vector<std::string> data_to_send;
     int type_of_request;
+    bool should_receive_packet; 
 
     sf::Packet received_packet;
     int received_code;
