@@ -482,7 +482,7 @@ Server::get_last_n_messages(const std::string &file_name, int n) {
     std::stringstream output_stream;
 
     // Construct them back with new line separator
-    for(int i = 0; i < lines.size(); ++i) {
+    while(!lines.empty()) {
         output_stream << lines.front() << std::endl;
         lines.pop();
     }
