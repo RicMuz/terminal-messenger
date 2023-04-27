@@ -104,7 +104,7 @@ $(your_user_name)>>>
 
 **Extensions:** *More servers communicating together (regular sync), more messages while not donwloading all of them if not necessary, possibility to reply to messages*
 
-## Instalation
+## Installation
 
 Pull the repository:
 
