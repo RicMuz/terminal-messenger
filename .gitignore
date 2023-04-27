@@ -49,7 +49,3 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-
-# Files that program makes
-Client/*.txt
-Server/*.txt
