@@ -92,9 +92,9 @@ $(your_user_name)>>>
 ## Development & Testing
 **Build system:** *CMake*
 
-**Testing Framework:** *GoogleTest*
+**Testing Framework:** *None from the complexity of usage of the program*
 
-**Required libraries/frameworks:** *SFML, ncurses, 0MQ, Protobuf, sqlite3*
+**Required libraries/frameworks:** *SFML*
 
 *Handling recieved packets, printing outputs for given input*
 
@@ -103,3 +103,31 @@ $(your_user_name)>>>
 **Minimum Viable Product:** *Working soulution with one server, and show given number of messages*
 
 **Extensions:** *More servers communicating together (regular sync), more messages while not donwloading all of them if not necessary, possibility to reply to messages*
+
+## Instalation
+
+Pull the repository:
+
+```bash
+git pull https://github.com/RicMuz/terminal-messenger.git
+```
+
+For the installation user needs to install CMake. After Cmake is installed follow these steps:
+
+```bash
+mkdir build && cd build
+```
+
+After that use the CMake (user should be inside of build dir):
+
+```bash
+cmake ..
+```
+
+This step will take a while, because cmake has to pull and install sfml libraries and generate MakeFiles for the project.
+
+```bash
+make .
+```
+
+The executables can be found in directories build/Server and build/Client as server and client.
