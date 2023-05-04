@@ -76,20 +76,41 @@ void
 Client::before_log_in_interface() {
     // Cycle while all necessary data aren't collected
     while(true) {
-        std::string input;
+        std::string input, temp, user_name, password;
         std::cout << ">>>";
-        std::cin >> input;
+        getline(std::cin, temp);
+        if(std::cin.eof()) {
+            exit = true;
+            break;
+        }
+        std::stringstream input_stream {temp};
+        input_stream >> input;
+        input_stream >> user_name;
+        input_stream >> password;
 
-        if(input == "help") {
+        if (input == "") {
+            continue;
+        } else if(input == "help") {
             print_before_log_in_help();
         } else if (input == "signup") {
-            get_user_name_and_password();
-            type_of_request = 0;
-            break;
+            if(check_user_name(user_name) && check_password(password)) {
+                data_to_send.push_back(user_name);
+                data_to_send.push_back(password);
+                type_of_request = 0;
+                break;
+            } else {
+                std::cout << "Wrong format of user name or password. Try again." << std::endl;
+            }
         } else if (input == "login") {
-            get_user_name_and_password();
-            type_of_request = 1;
-            break;
+            if(check_user_name(user_name) && check_password(password)) {
+                data_to_send.push_back(user_name);
+                data_to_send.push_back(password);
+                logged_user_name = user_name;
+                type_of_request = 1;
+                break;
+            } else {
+                std::cout << "Wrong format of user name or password. Try again." << std::endl;
+            }
         } else if (input == "exit") {
             exit = true;
             break;
@@ -101,44 +122,17 @@ Client::before_log_in_interface() {
 
 void
 Client::print_before_log_in_help() {
-    std::cout << "login\tto log in" << std::endl;
-    std::cout << "signup\tto create a new account" <<std::endl;
+    std::cout << "login $(user_name) $(password)\tto log in" << std::endl;
+    std::cout << "signup $(user_name) $(password)\tto create a new account" <<std::endl;
     std::cout << "exit\tto exit the app" <<std::endl;
-}
-
-void
-Client::get_user_name_and_password() {
-    std::string user_name, password;
-
-    std::cout << "user name: ";
-    bool good_user_name = false;
-
-    while(!good_user_name) {
-        std::cin >> user_name;
-        good_user_name = check_user_name(user_name);
-        if(!good_user_name) {
-            std::cout << "This username is not allowed, try again: ";
-        }
-    }
-
-    std::cout << "password: ";
-    bool good_password = false;
-
-    while (!good_password) {
-        std::cin >> password;
-        good_password = check_password(password);
-        if(!good_password) {
-            std::cout << "Bad password, password cannot contain any type of white space, try again: ";
-        }
-    }
-
-    logged_user_name = user_name;
-    data_to_send.push_back(user_name);
-    data_to_send.push_back(password);
 }
 
 bool
 Client::check_user_name(const std::string &user_name) {
+    if(user_name.empty()) {
+        return false;
+    }
+
     // Check if the user name contains just alphanumeric symbols
     for(auto && c:user_name) {
         if(!isalnum(c)) {
@@ -150,6 +144,10 @@ Client::check_user_name(const std::string &user_name) {
 
 bool
 Client::check_password(const std::string &password) {
+    if(password.empty()) {
+        return false;
+    }
+
     // Check if password does not contain white space
     for(auto && c:password) {
         if(isspace(c)) {
@@ -163,22 +161,34 @@ void
 Client::after_log_in_interface_menu() {
     // Cycle while all necessary data aren't collected
     while(true) {
-        std::string input;
+        std::string input, temp;
         std::cout << logged_user_name <<">>>";
-        std::cin >> input;
+        getline(std::cin, temp);
+        if(std::cin.eof()) {
+            type_of_request = 2;
+            exit = true;
+            break;
+        }
+        std::stringstream input_stream {temp};
+        input_stream >> input;
 
-        if(input == "help") {
+        temp.clear();
+        input_stream >> temp;
+
+        if(input == "") {
+            continue;
+        } else if(input == "help") {
             print_after_log_in_help();
         } else if (input == "ls") {
             type_of_request = 6;
             break; 
         } else if (input == "open") {
-            get_name_of_friend();
+            get_name_of_friend(temp);
             in_chat_room = true;
             type_of_request = 4;
             break;
         } else if (input == "add") {
-            get_name_of_friend();
+            get_name_of_friend(temp);
             type_of_request = 3;
             break;
         } else if (input == "logout") {
@@ -204,9 +214,9 @@ Client::print_after_log_in_help() {
 }
 
 void
-Client::get_name_of_friend() {
+Client::get_name_of_friend(const std::string &input) {
     std::string friends_name;
-    std::cin >> friends_name;
+    friends_name = input;
 
     // Wait till good data are inserted
     while(true) {
@@ -224,16 +234,25 @@ Client::get_name_of_friend() {
 void
 Client::after_log_in_interface_message_room() {
     while(true) {
-        std::string input;
+        std::string input, temp;
         std::cout << logged_user_name << "-" << friend_name <<">>>";
-        std::cin >> input;
+        getline(std::cin, temp);
+        if(std::cin.eof()) {
+            type_of_request = 2;
+            exit = true;
+            break;
+        }
+        std::stringstream input_stream {temp};
+        input_stream >> input;
 
-        if(input == "help") {
+        if(input == "") {
+            continue;
+        } else if(input == "help") {
             print_message_room_help();
         } else if(input == "send") {
             type_of_request = 5;
             std::string message;
-            getline(std::cin, message); // TODO: get rid of leading and trailing white spaces
+            input_stream >> std::ws && getline(input_stream,message,'\0');
             data_to_send.push_back(message);
             break;
         } else if(input == "leave") {
@@ -336,6 +355,7 @@ Client::print_answer() {
         case 2:
             std::cout << "Log out successful." << std::endl;
             logged_in = false;
+            break;
         case 3:
             std::cout << "You're friends now." << std::endl; 
             break;

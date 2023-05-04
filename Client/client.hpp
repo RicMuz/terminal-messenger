@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <SFML/Network.hpp>
 
@@ -32,13 +33,12 @@ private:
 
     void before_log_in_interface();
     void print_before_log_in_help();
-    void get_user_name_and_password();
     bool check_user_name(const std::string &user_name); // should contain just alphabet and numbers
     bool check_password(const std::string &password); // should not contain any whitespace
 
     void after_log_in_interface_menu();
     void print_after_log_in_help();
-    void get_name_of_friend();
+    void get_name_of_friend(const std::string &input);
 
     void after_log_in_interface_message_room();
     void print_message_room_help();
