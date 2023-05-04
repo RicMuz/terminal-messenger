@@ -1,5 +1,6 @@
 #pragma once
 
+#include "codes.hpp"
 #include <string>
 #include <vector>
 #include <map>
@@ -38,7 +39,7 @@ private:
 
     bool is_username_used(std::string &user_name);
     void add_user_to_database(const std::string &user_name, const std::string &password);
-    int check_login_data(std::string &user_name, std::string &password);
+    return_code check_login_data(std::string &user_name, std::string &password);
     void add_to_friend_list(const std::string &user_name, const std::string &other_user_name);
     std::string create_chat_file_name(const std::string &user_name, const std::string &other_user_name);
     bool are_friends(const std::string &user_name, const std::string &other_user);

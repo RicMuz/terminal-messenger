@@ -1,5 +1,18 @@
-#pragma once
 #include "server.hpp"
+
+sf::Packet &operator>>(sf::Packet &packet, type_of_request &data) {
+    int temp;
+    packet >> temp;
+    data = static_cast<type_of_request>(temp);
+    return packet;
+}
+
+sf::Packet &operator<<(sf::Packet &packet, return_code &code) {
+    int temp;
+    temp = static_cast<int>(code);
+    packet << temp;
+    return packet;
+}
 
 void
 Server::Run() {
@@ -102,30 +115,30 @@ Server::receive_packet(sf::TcpSocket *client, size_t position) {
 
 void
 Server::manage_packet(sf::Packet &packet, sf::TcpSocket *client) {
-    int type;
+    type_of_request type;
     packet >> type;
 
     switch (type) //TODO: should watch if 2 login requests won't come from the same socket
     {
-    case 0: // signup
+    case type_of_request::sign_up: // signup
         sign_up(packet, client);
         break;
-    case 1: // login
+    case type_of_request::log_in: // login
         log_in(packet, client);
         break;
-    case 2: // logout
+    case type_of_request::log_out: // logout
         log_out(client, false);
         break;
-    case 3: // add users to friend list
+    case type_of_request::add_friend: // add users to friend list
         add_friend(packet, client);
         break;
-    case 4: // open chat
+    case type_of_request::open_chat: // open chat
         open_chat(packet, client);
         break;
-    case 5: // send message to chat
+    case type_of_request::send_message: // send message to chat
         send_message(packet, client);
         break;
-    case 6: // lists friends from friend list
+    case type_of_request::list_friends: // lists friends from friend list
         list_friends(packet, client);
         break;
 
@@ -154,7 +167,7 @@ Server::check_user_and_address(const std::string &user_name, const std::string &
     // Test if the right user is asking
     if(loged_users[user_address.str()] != user_name) {
         std::cout << "Error: " << user_address.str() << " wants to " << type << " as " << user_name << " although " << loged_users[user_address.str()] << " is logged in on that address" << std::endl;
-        answer << 4;
+        answer << return_code::unauthorized_access;
         send_answer_to_client(answer, type, client);
         return false;
     }
@@ -183,7 +196,7 @@ Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
 
     if(already_exists) {
         // Send unsuccesseful response
-        answer << 1;
+        answer << return_code::user_exists;
     } else {
         // Send successful response and add to database
         add_user_to_database(user_name, password);
@@ -193,7 +206,7 @@ Server::sign_up(sf::Packet &packet, sf::TcpSocket *client) {
         friend_list_stream.open(user_name + ".txt", std::ios::app);
         friend_list_stream.close();
 
-        answer << 0;
+        answer << return_code::success;
     }
 
     // Send the response
@@ -247,13 +260,13 @@ Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
     packet >> password;
 
     // Check database
-    int answer_from_database = check_login_data(user_name, password);
+    return_code answer_from_database = check_login_data(user_name, password);
 
     // Create packet with answer
     sf::Packet answer;
     answer << answer_from_database;
 
-    if(answer_from_database == 0) { 
+    if(answer_from_database == return_code::success) { 
         std::stringstream user_address;
         user_address << client->getRemoteAddress() << ":" << client->getRemotePort();
         loged_users[user_address.str()] = user_name;
@@ -264,9 +277,9 @@ Server::log_in(sf::Packet &packet, sf::TcpSocket *client) {
     send_answer_to_client(answer, "log in", client);
 }
 
-int
+return_code
 Server::check_login_data(std::string &user_name, std::string &password) {
-    int to_return = 3; // Need to close the file before returning the values
+    return_code to_return = return_code::user_does_not_exist; // Need to close the file before returning the values
     /*
     0 - login successful
     2 - wrong password
@@ -284,10 +297,10 @@ Server::check_login_data(std::string &user_name, std::string &password) {
         // If if username is already in there then break
         if(user_name == user_name_database) {
             if(password == password_database) {
-                to_return = 0;
+                to_return = return_code::success;
                 break;
             }
-            to_return = 2;
+            to_return = return_code::wrong_password;
             break;
         }
     }
@@ -314,7 +327,7 @@ Server::log_out(sf::TcpSocket *client, bool from_server) {
     if(!from_server) {
         // Create packet with successful answer
         sf::Packet answer;
-        answer << 0;
+        answer << return_code::success;
 
         send_answer_to_client(answer, "logout", client);
     }
@@ -342,7 +355,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // User wants to add himself as friend
     if(user_name == other_user) {
         std::cout << "Error: user " << user_name << " wants to add himself as friend." << std::endl;
-        answer << 5;
+        answer << return_code::self_friend;
         send_answer_to_client(answer, "add friend", client);
         return;
     }
@@ -350,7 +363,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     // User wants to add non existing account 
     if(!is_username_used(other_user)) {
         std::cout << "Error: user " << user_name << " wants to add non-existing account as friend" << std::endl;
-        answer << 6;
+        answer << return_code::non_existing_friend;
         send_answer_to_client(answer, "add friend", client);
         return;
     }
@@ -366,7 +379,7 @@ Server::add_friend(sf::Packet &packet, sf::TcpSocket *client) {
     out.close(); 
 
     // Create an answer with possitive result
-    answer << 0;
+    answer << return_code::success;
 
     // Send the response
     send_answer_to_client(answer, "add friend", client);
@@ -405,7 +418,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
 
     // Check if they are friends
     if(!are_friends(user_name, other_user)) {
-        answer << 7;
+        answer << return_code::not_friends;
         std::cout << "Error: user wants to open non-existing chat";
         send_answer_to_client(answer, "open chat", client);
         return;
@@ -418,7 +431,7 @@ Server::open_chat(sf::Packet &packet, sf::TcpSocket *client) {
     chat = get_last_n_messages(file_name, 10);
 
     // Create an answer with possitive result
-    answer << 0;
+    answer << return_code::success;
     answer << chat;
 
     // Send the response
@@ -512,7 +525,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
 
     // Check if they are friends
     if(!are_friends(user_name, other_user)) {
-        answer << 7;
+        answer << return_code::not_friends;
         std::cout << "Error: user wants to open non-existing chat";
         send_answer_to_client(answer, "open chat", client);
         return;
@@ -525,7 +538,7 @@ Server::send_message(sf::Packet &packet, sf::TcpSocket *client) {
     add_message_to_file(user_name, message, file_name);
 
     // Create an answer with possitive result
-    answer << 0;
+    answer << return_code::success;
 
     // Send the response 
     send_answer_to_client(answer, "send message", client);
@@ -561,7 +574,7 @@ Server::list_friends(sf::Packet &packet, sf::TcpSocket *client) {
     sf::Packet answer;
 
     // Create return packet
-    answer << 0;
+    answer << return_code::success;
     answer << friend_list(user_name);
 
     // Send the response
