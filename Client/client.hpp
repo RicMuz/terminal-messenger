@@ -28,7 +28,7 @@ private:
 
     bool exit;
 
-    
+    void prompt_info(const std::string &prompt, bool &should_break_loop, std::stringstream &input_stream);
     void get_user_input();
 
     void before_log_in_interface();

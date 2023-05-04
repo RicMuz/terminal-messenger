@@ -51,6 +51,28 @@ Client::Run() {
 // GET USER INPUT - GET USER INPUT - GET USER INPUT - GET USER INPUT - GET USER INPUT - GET USER INPUT - GET U
 //============================================================================================================
 
+
+void
+Client::prompt_info(const std::string &prompt, bool &should_break_loop, std::stringstream &input_stream) {
+    std::string temp;
+    should_break_loop = false;
+
+    // Print the prompt and get the input
+    std::cout << prompt << ">>>";
+    getline(std::cin, temp);
+
+    // If C-d was pressed end the program
+    if(std::cin.eof()) {
+        type_of_request = 2;
+        exit = true;
+        should_break_loop = true;
+    }
+
+    // Create output
+    input_stream.clear();
+    input_stream = std::stringstream(temp);
+}
+
 void
 Client::get_user_input() {
     // Empty request before
@@ -76,14 +98,15 @@ void
 Client::before_log_in_interface() {
     // Cycle while all necessary data aren't collected
     while(true) {
-        std::string input, temp, user_name, password;
-        std::cout << ">>>";
-        getline(std::cin, temp);
-        if(std::cin.eof()) {
-            exit = true;
+        std::string input, user_name, password;
+        bool should_break_loop;
+        std::stringstream input_stream;
+        prompt_info("",should_break_loop,input_stream);
+
+        if(should_break_loop) {
             break;
         }
-        std::stringstream input_stream {temp};
+
         input_stream >> input;
         input_stream >> user_name;
         input_stream >> password;
@@ -162,17 +185,15 @@ Client::after_log_in_interface_menu() {
     // Cycle while all necessary data aren't collected
     while(true) {
         std::string input, temp;
-        std::cout << logged_user_name <<">>>";
-        getline(std::cin, temp);
-        if(std::cin.eof()) {
-            type_of_request = 2;
-            exit = true;
+        bool should_break_loop;
+        std::stringstream input_stream;
+        prompt_info(logged_user_name, should_break_loop, input_stream);
+
+        if(should_break_loop) {
             break;
         }
-        std::stringstream input_stream {temp};
-        input_stream >> input;
 
-        temp.clear();
+        input_stream >> input;
         input_stream >> temp;
 
         if(input == "") {
@@ -235,14 +256,14 @@ void
 Client::after_log_in_interface_message_room() {
     while(true) {
         std::string input, temp;
-        std::cout << logged_user_name << "-" << friend_name <<">>>";
-        getline(std::cin, temp);
-        if(std::cin.eof()) {
-            type_of_request = 2;
-            exit = true;
+        bool should_break_loop;
+        std::stringstream input_stream;
+        prompt_info(logged_user_name + "-" + friend_name, should_break_loop, input_stream);
+
+        if(should_break_loop) {
             break;
         }
-        std::stringstream input_stream {temp};
+
         input_stream >> input;
 
         if(input == "") {
