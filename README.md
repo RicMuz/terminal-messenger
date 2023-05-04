@@ -25,8 +25,8 @@ Unknown command. Type help to print commands.
 
 ```
 >>>help
-login   to login
-signup  to create new user
+login $(user_name) $(password)  to login
+signup $(user_name) $(password) to create new user
 exit    to exit the app
 ```
 
@@ -44,7 +44,7 @@ exit    to log out and exit the app
 *Help in chat:*
 
 ```
-$(your_user_name)>>>help
+$(your_user_name)-$(friends_user_name)>>>help
 send "Your message"     to send message
 leave                   to exit to main menu
 ```
@@ -82,7 +82,7 @@ He is in England.
 $(your_user_name)
 Have you forgot about it?
 
-$(your_user_name)>>>
+$(your_user_name)-$(friends_user_name)>>>
 ```
 
 ## Architecture
