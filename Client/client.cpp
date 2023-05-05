@@ -1,5 +1,19 @@
 #include "client.hpp"
 
+sf::Packet &operator>>(sf::Packet &packet, return_code &code) {
+    int temp;
+    packet >> temp;
+    code = static_cast<return_code>(temp);
+    return packet;
+}
+
+sf::Packet &operator<<(sf::Packet &packet, type_of_request &request) {
+    int temp;
+    temp = static_cast<int>(request);
+    packet << temp;
+    return packet;
+}
+
 Client::Client() {
     std::cout << "Terminal messenger started" << std::endl;
     logged_in = false;
@@ -63,7 +77,7 @@ Client::prompt_info(const std::string &prompt, bool &should_break_loop, std::str
 
     // If C-d was pressed end the program
     if(std::cin.eof()) {
-        type_of_request = 2;
+        request_code = type_of_request::log_out;
         exit = true;
         should_break_loop = true;
     }
@@ -115,21 +129,16 @@ Client::before_log_in_interface() {
             continue;
         } else if(input == "help") {
             print_before_log_in_help();
-        } else if (input == "signup") {
+        } else if (input == "signup" || input == "login") {
             if(check_user_name(user_name) && check_password(password)) {
                 data_to_send.push_back(user_name);
                 data_to_send.push_back(password);
-                type_of_request = 0;
-                break;
-            } else {
-                std::cout << "Wrong format of user name or password. Try again." << std::endl;
-            }
-        } else if (input == "login") {
-            if(check_user_name(user_name) && check_password(password)) {
-                data_to_send.push_back(user_name);
-                data_to_send.push_back(password);
-                logged_user_name = user_name;
-                type_of_request = 1;
+                if(input == "signup") {
+                    request_code = type_of_request::sign_up;
+                } else {
+                    logged_user_name = user_name;
+                    request_code = type_of_request::log_in;
+                }
                 break;
             } else {
                 std::cout << "Wrong format of user name or password. Try again." << std::endl;
@@ -201,22 +210,22 @@ Client::after_log_in_interface_menu() {
         } else if(input == "help") {
             print_after_log_in_help();
         } else if (input == "ls") {
-            type_of_request = 6;
+            request_code = type_of_request::list_friends;
             break; 
         } else if (input == "open") {
             get_name_of_friend(temp);
             in_chat_room = true;
-            type_of_request = 4;
+            request_code = type_of_request::open_chat;
             break;
         } else if (input == "add") {
             get_name_of_friend(temp);
-            type_of_request = 3;
+            request_code = type_of_request::add_friend;
             break;
         } else if (input == "logout") {
-            type_of_request = 2;
+            request_code = type_of_request::log_out;
             break;
         } else if (input == "exit") {
-            type_of_request = 2; // before exiting the program we need to log out
+            request_code = type_of_request::log_out; // before exiting the program we need to log out
             exit = true;
             break;
         } else {
@@ -271,13 +280,13 @@ Client::after_log_in_interface_message_room() {
         } else if(input == "help") {
             print_message_room_help();
         } else if(input == "send") {
-            type_of_request = 5;
+            request_code = type_of_request::send_message;
             std::string message;
             input_stream >> std::ws && getline(input_stream,message,'\0');
             data_to_send.push_back(message);
             break;
         } else if(input == "leave") {
-            type_of_request = 100;
+            request_code = type_of_request::exit_chat;
             break;
         } else {
             std::cout << "Unknown command. Type help to print commands." << std::endl;
@@ -298,22 +307,22 @@ Client::print_message_room_help() {
 
 void
 Client::handle_request() {
-    switch (type_of_request)
+    switch (request_code)
     {
-    case 0 ... 6: // requires answer from server
+    case type_of_request::sign_up ... type_of_request::list_friends:
         create_packet();
         should_receive_packet = true;
         send_packet(to_send);
         break;
 
-    case 100:
+    case type_of_request::exit_chat:
         in_chat_room = false;
         should_receive_packet = false;
         friend_name.clear();
         break;
     
     default:
-        std::cout << "Erorr: unknown request " << type_of_request << std::endl;
+        std::cout << "Erorr: unknown request " << request_code << std::endl;
         exit = true;
         break;
     }
@@ -325,7 +334,7 @@ Client::create_packet() {
     to_send.clear();
 
     // Make the packet
-    to_send << type_of_request;
+    to_send << request_code;
     for(auto && s:data_to_send) {
         to_send << s;
     }
@@ -363,28 +372,28 @@ Client::print_answer() {
 
     switch (received_code)
     {
-    case 0:
-        switch (type_of_request)
+    case return_code::success:
+        switch (request_code)
         {
-        case 0:
+        case type_of_request::sign_up:
             std::cout << "Sign up successful, try log in." << std::endl;
             break;
-        case 1:
+        case type_of_request::log_in:
             std::cout << "Log in successful." << std::endl;
             logged_in = true;
             break;
-        case 2:
+        case type_of_request::log_out:
             std::cout << "Log out successful." << std::endl;
             logged_in = false;
             break;
-        case 3:
+        case type_of_request::add_friend:
             std::cout << "You're friends now." << std::endl; 
             break;
-        case 4: case 6:
+        case type_of_request::open_chat: case type_of_request::list_friends:
             received_packet >> received_data;
             std::cout << received_data;
             break;
-        case 5:
+        case type_of_request::send_message:
             std::cout << "OK" << std::endl;
             break;
 
@@ -393,25 +402,25 @@ Client::print_answer() {
             break;
         }
         break;
-    case 1:
+    case return_code::user_exists:
         std::cout << "Error: user already exists, try different name." << std::endl;
         break;
-    case 2:
+    case return_code::wrong_password:
         std::cout << "Error: wrong password, try again" << std::endl;
         break;
-    case 3:
+    case return_code::user_does_not_exist:
         std::cout << "Error: user does not exist, try again." << std::endl;
         break;
-    case 4:
+    case return_code::unauthorized_access:
         std::cout << "Error: unauthorized access, contact admin." << std::endl;
         break;
-    case 5:
+    case return_code::self_friend:
         std::cout << "Error: you can't add yourself as friend." << std::endl;
         break;
-    case 6:
+    case return_code::non_existing_friend:
         std::cout << "Error: user does not exist." << std::endl;
         break;
-    case 7:
+    case return_code::not_friends:
         std::cout << "Error: you need to be friends to open chat." << std::endl;
         break;
     

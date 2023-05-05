@@ -1,5 +1,6 @@
 #pragma once
 
+#include "codes.hpp"
 #include <string>
 #include <vector>
 #include <iostream>
@@ -19,11 +20,11 @@ private:
     std::string friend_name;
 
     std::vector<std::string> data_to_send;
-    int type_of_request;
+    type_of_request request_code;
     bool should_receive_packet; 
 
     sf::Packet received_packet;
-    int received_code;
+    return_code received_code;
     std::string received_data;
 
     bool exit;
